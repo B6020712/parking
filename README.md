@@ -1,5 +1,5 @@
-# Parking and Pooping in Thailand
+# Parking and Pooping in Thailand<br/>
 For Practices
-> Frontend : Next.js (React) 
-> Backend : Nest.js 
-> Database : PostgreSQL 
+> Frontend : `Next.js` (React)<br/>
+> Backend : `Nest.js` (TypeScript)<br/>
+> Database : PostgreSQL<br/>
