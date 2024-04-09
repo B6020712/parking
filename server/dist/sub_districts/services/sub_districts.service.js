@@ -18,11 +18,16 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const sub_districts_entity_1 = require("../entities/sub_districts.entity");
 let SubDistrictsService = class SubDistrictsService {
-    constructor(districtsRepository) {
-        this.districtsRepository = districtsRepository;
+    constructor(subDistrictsRepository) {
+        this.subDistrictsRepository = subDistrictsRepository;
     }
     findAll() {
-        return this.districtsRepository.find();
+        return this.subDistrictsRepository
+            .createQueryBuilder("sub_districts")
+            .select(['sub_districts.id', 'sub_districts.name_th'])
+            .leftJoinAndSelect('sub_districts.amphure', 'amphure', 'sub_districts.amphure = amphure.id')
+            .addSelect(['amphure.id', 'amphure.name_th'])
+            .getMany();
     }
 };
 exports.SubDistrictsService = SubDistrictsService;

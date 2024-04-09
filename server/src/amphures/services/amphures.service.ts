@@ -12,6 +12,13 @@ export class AmphuresService {
     ) {}
 
     findAll(): Promise<Amphures[]> {
-        return this.amphuresRepository.find();
+        // return this.amphuresRepository.find();
+        return this.amphuresRepository
+            .createQueryBuilder("amphures")
+            .select(['amphures.id', 'amphures.name_th'])
+            .leftJoinAndSelect('amphures.provinces', 'provinces', 'amphures.provinces = provinces.id')
+            .addSelect(['provinces.id', 'provinces.name_th'])
+            .getMany();
+        ;
     }
 }

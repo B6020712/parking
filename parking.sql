@@ -32,4 +32,8 @@ SELECT * FROM parking
 
 SELECT * FROM geographies
 
+SELECT * FROM amphures
+
+SELECT * FROM sub_districts
+
 SELECT * FROM sub_districts LEFT JOIN amphures ON sub_districts.amphure_id = amphures.id WHERE sub_districts.name_th = 'หนองบอน'
