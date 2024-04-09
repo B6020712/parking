@@ -3,15 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function EditParkingForm(props) {
-    const [name, setName] = useState(props.name)
-    const [address, setAddress] = useState(props.address)
-    const [subDistrict, setSubDistrict] = useState(props.sub_district)
-    const [parkingSpace, setParkingSpace] = useState(props.parking_space)
-    const [supportCarType, setSupportCarType] = useState(props.support_car_type)
-    const [pricing, setPricing] = useState(props.pricing)
+export default function EditParkingForm({ parking, provinces, districts, subDistricts }) {
+    const [name, setName] = useState(parking.name)
+    const [address, setAddress] = useState(parking.address)
+    const [parkingSpace, setParkingSpace] = useState(parking.parking_space)
+    const [supportCarType, setSupportCarType] = useState(parking.support_car_type)
+    const [pricing, setPricing] = useState(parking.pricing)
+
+    let tmpDist = subDistricts.filter(ele => parseInt(ele.id) === parseInt(parking.sub_district.id));
+    let tmpProv = districts.filter(ele => parseInt(ele.id) === parseInt(tmpDist[0].amphure.id));
+    
+    const [province, setProvince] = useState(tmpProv[0].provinces.id)
+    const [district, setDistrict] = useState(tmpDist[0].amphure.id)
+    const [subDistrict, setSubDistrict] = useState(parking.sub_district.id)
 
     const router = useRouter();
+
+    districts = districts.filter(ele => parseInt(ele.provinces.id) === parseInt(province))
+    subDistricts = subDistricts.filter(ele => parseInt(ele.amphure.id) === parseInt(district))
     
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -30,7 +39,7 @@ export default function EditParkingForm(props) {
                 support_car_type: supportCarType,
                 pricing,
             }
-            const res = await fetch(`http://localhost:3000/parking/${props.id}`, {
+            const res = await fetch(`http://localhost:3000/parking/${parking.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type" : "application/json"
@@ -71,14 +80,77 @@ export default function EditParkingForm(props) {
                     placeholder="Address"
                 />
 
+                <span className="p-2">Province</span>
+                <input 
+                    id="province"
+                    name="province" 
+                    list="provinces_list" 
+                    className="border border-slate-200 px-8 pr-2" 
+                    onChange={(e) => {
+                        setProvince(e.target.value)
+                        setDistrict('')
+                        setSubDistrict('')
+                    }}
+                    value={province}
+                    placeholder="Provinces Name"
+                />
+                <datalist id={'provinces_list'}>
+                    {
+                        provinces.map((data) => (
+                            <option key={data.id} value={data.id}>{data.name_th}</option>
+                        ))
+                    }
+                </datalist>
+
+                <span className="p-2">District</span>
+                <input 
+                    id="discrict" 
+                    name="discrict" 
+                    list="districts_list" 
+                    className="border border-slate-200 px-8 pr-2" 
+                    disabled={!province} 
+                    onChange={(e) => {
+                        setDistrict(e.target.value)
+                        setSubDistrict('')
+                    }}
+                    value={district}
+                    placeholder="Districts Name"
+                />
+                <datalist id={'districts_list'}>
+                    {
+                        districts.map((data) => (
+                            <option key={data.id} value={data.id}>{data.name_th}</option>
+                        ))
+                    }
+                </datalist>
+                
                 <span className="p-2">Sub District</span>
+                <input 
+                    id="sub_district" 
+                    name="sub_district" 
+                    list="sub_districts_list" 
+                    className="border border-slate-200 px-8 pr-2" 
+                    disabled={!district}
+                    onChange={(e) => setSubDistrict(e.target.value)}
+                    value={subDistrict}
+                    placeholder="Sub Districts Name"
+                />
+                <datalist id={'sub_districts_list'}>
+                    {
+                        subDistricts.map((data) => (
+                            <option key={data.id} value={data.id}>{data.name_th}</option>
+                        ))
+                    }
+                </datalist>
+
+                {/* <span className="p-2">Sub District</span>
                 <input 
                     onChange={(e) => setSubDistrict(e.target.value)}
                     value={subDistrict.id}
                     className="border border-slate-200 px-8 py-2"
                     type="text"
                     placeholder="Sub District"
-                />
+                /> */}
 
                 <span className="p-2">Parking Space</span>
                 <input 

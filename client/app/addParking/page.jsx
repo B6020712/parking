@@ -20,7 +20,6 @@ async function getDistricts() {
         throw new Error(`Can't get ${content}s`)
     }
     return resDistricts.json()
-    // return resDistricts.filter(data => elemId === data.provinces.id)
 }
 
 async function getSubDistricts() {
@@ -29,7 +28,6 @@ async function getSubDistricts() {
         throw new Error(`Can't get ${content}s`);
     }
     return resSubDistricts.json()
-    // return resSubDistricts.filter(data => data.amphure_id === elemId)
 }
 
 export default async function addParking() {

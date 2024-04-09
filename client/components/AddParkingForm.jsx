@@ -137,15 +137,6 @@ export default function AddParkingForm ({ provinces, districts, subDistricts }) 
                     }
                 </datalist>
 
-                {/* <span className="p-2">Sub District</span>
-                <input 
-                    onChange={(e) => setSubDistrict(e.target.value)}
-                    value={subDistrict.id}
-                    className="border border-slate-200 px-8 py-2"
-                    type="text"
-                    placeholder="Sub District"
-                /> */}
-
                 <span className="p-2">Parking Space</span>
                 <input 
                     onChange={(e) => setParkingSpace(e.target.value)}
