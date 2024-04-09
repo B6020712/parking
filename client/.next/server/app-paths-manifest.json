@@ -1,5 +1,5 @@
 {
+  "/editParking/[id]/page": "app/editParking/[id]/page.js",
   "/addParking/page": "app/addParking/page.js",
-  "/page": "app/page.js",
-  "/editParking/[id]/page": "app/editParking/[id]/page.js"
+  "/page": "app/page.js"
 }
