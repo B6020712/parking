@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
 
 export default function AddParkingForm ({ provinces, districts, subDistricts }) {
+    const router = useRouter();
+
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
     const [parkingSpace, setParkingSpace] = useState('')
@@ -11,12 +15,11 @@ export default function AddParkingForm ({ provinces, districts, subDistricts }) 
     const [province, setProvince] = useState('')
     const [district, setDistrict] = useState('')
     const [subDistrict, setSubDistrict] = useState('')
-
-    const router = useRouter();
-
-    districts = districts.filter(ele => parseInt(ele.provinces.id) === parseInt(province))
-    subDistricts = subDistricts.filter(ele => parseInt(ele.amphure.id) === parseInt(district))
     
+    // provinces = provinces.map((el) => ({ id: el.id, label: el.name_th }));
+    districts = districts.filter(ele => parseInt(ele.provinces.id) === parseInt(province.id))
+    subDistricts = subDistricts.filter(ele => parseInt(ele.amphure.id) === parseInt(district.id))
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -75,67 +78,60 @@ export default function AddParkingForm ({ provinces, districts, subDistricts }) 
                 />
 
                 <span className="p-2">Province</span>
-                <input 
+                <Autocomplete
                     id="province"
-                    name="province" 
-                    list="provinces_list" 
-                    className="border border-slate-200 px-8 pr-2" 
-                    onChange={(e) => {
-                        setProvince(e.target.value)
-                        setDistrict('')
-                        setSubDistrict('')
-                    }}
+                    freeSolo
+                    options={provinces}
+                    getOptionLabel={(option) => option.name_th ? option.name_th : ""}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={province}
-                    placeholder="Provinces Name"
+                    onChange={(e, newVal) => {
+                        if (newVal !== null) {
+                            setProvince(newVal)
+                            setDistrict("")
+                            setSubDistrict("")
+                        }
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="Provinces Name" />}
                 />
-                <datalist id={'provinces_list'}>
-                    {
-                        provinces.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
 
                 <span className="p-2">District</span>
-                <input 
-                    id="discrict" 
-                    name="discrict" 
-                    list="districts_list" 
-                    className="border border-slate-200 px-8 pr-2" 
+                <Autocomplete
                     disabled={!province} 
-                    onChange={(e) => {
-                        setDistrict(e.target.value)
-                        setSubDistrict('')
-                    }}
+                    id="discrict"
+                    freeSolo
+                    options={districts}
+                    getOptionLabel={(option) => option.name_th ? option.name_th : ""}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={district}
-                    placeholder="Districts Name"
+                    onChange={(e, newVal) => {
+                        if (newVal !== null) {
+                            setDistrict(newVal)
+                            setSubDistrict('')
+                        }
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="District Name" />}
                 />
-                <datalist id={'districts_list'}>
-                    {
-                        districts.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
                 
                 <span className="p-2">Sub District</span>
-                <input 
-                    id="sub_district" 
-                    name="sub_district" 
-                    list="sub_districts_list" 
-                    className="border border-slate-200 px-8 pr-2" 
-                    disabled={!district}
-                    onChange={(e) => setSubDistrict(e.target.value)}
+                <Autocomplete
+                    disabled={!district} 
+                    id="sub_district"
+                    freeSolo
+                    options={subDistricts}
+                    getOptionLabel={(option) => option.name_th ? option.name_th : ""}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={subDistrict}
-                    placeholder="Sub Districts Name"
+                    onChange={(e, newVal) => {
+                        if (newVal !== null) {
+                            setSubDistrict(newVal)
+                        }
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="Sub District Name" />}
                 />
-                <datalist id={'sub_districts_list'}>
-                    {
-                        subDistricts.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
 
                 <span className="p-2">Parking Space</span>
                 <input 

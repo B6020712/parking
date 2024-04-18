@@ -1,26 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
 
 export default function EditParkingForm({ parking, provinces, districts, subDistricts }) {
+    const router = useRouter();
+    
     const [name, setName] = useState(parking.name)
     const [address, setAddress] = useState(parking.address)
     const [parkingSpace, setParkingSpace] = useState(parking.parking_space)
     const [supportCarType, setSupportCarType] = useState(parking.support_car_type)
     const [pricing, setPricing] = useState(parking.pricing)
 
-    let tmpDist = subDistricts.filter(ele => parseInt(ele.id) === parseInt(parking.sub_district.id));
-    let tmpProv = districts.filter(ele => parseInt(ele.id) === parseInt(tmpDist[0].amphure.id));
-    
-    const [province, setProvince] = useState(tmpProv[0].provinces.id)
-    const [district, setDistrict] = useState(tmpDist[0].amphure.id)
-    const [subDistrict, setSubDistrict] = useState(parking.sub_district.id)
+    let tmpDist = subDistricts.find(ele => parseInt(ele.id) === parseInt(parking.sub_district.id));
+    let tmpProv = districts.find(ele => parseInt(ele.id) === parseInt(tmpDist.amphure.id));
 
-    const router = useRouter();
+    const [province, setProvince] = useState(tmpProv.provinces)
+    const [district, setDistrict] = useState(tmpDist.amphure)
+    const [subDistrict, setSubDistrict] = useState(parking.sub_district)
 
-    districts = districts.filter(ele => parseInt(ele.provinces.id) === parseInt(province))
-    subDistricts = subDistricts.filter(ele => parseInt(ele.amphure.id) === parseInt(district))
+    let mapDistricts = useMemo(() => {
+        return districts = districts.filter(ele => parseInt(ele.provinces.id) === parseInt(province.id))
+    }, [districts]);
+
+    let mapSubDistricts = useMemo(() => {
+        return subDistricts = subDistricts.filter(ele => parseInt(ele.amphure.id) === parseInt(district.id))
+    }, [subDistricts]);
     
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -81,76 +88,51 @@ export default function EditParkingForm({ parking, provinces, districts, subDist
                 />
 
                 <span className="p-2">Province</span>
-                <input 
+                <Autocomplete
                     id="province"
-                    name="province" 
-                    list="provinces_list" 
-                    className="border border-slate-200 px-8 pr-2" 
-                    onChange={(e) => {
-                        setProvince(e.target.value)
-                        setDistrict('')
-                        setSubDistrict('')
-                    }}
+                    options={provinces}
+                    getOptionLabel={(option) => option.name_th}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={province}
-                    placeholder="Provinces Name"
+                    onChange={(e, newVal) => {
+                        setProvince(newVal)
+                        setDistrict("")
+                        setSubDistrict("")
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="Provinces Name" />}
                 />
-                <datalist id={'provinces_list'}>
-                    {
-                        provinces.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
 
                 <span className="p-2">District</span>
-                <input 
-                    id="discrict" 
-                    name="discrict" 
-                    list="districts_list" 
-                    className="border border-slate-200 px-8 pr-2" 
+                <Autocomplete
                     disabled={!province} 
-                    onChange={(e) => {
-                        setDistrict(e.target.value)
-                        setSubDistrict('')
-                    }}
+                    id="discrict"
+                    options={mapDistricts}
                     value={district}
-                    placeholder="Districts Name"
+                    getOptionLabel={(option) => option.name_th}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(e, newVal) => {
+                        setSubDistrict('')
+                        setDistrict(newVal)
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="District Name" />}
                 />
-                <datalist id={'districts_list'}>
-                    {
-                        districts.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
                 
                 <span className="p-2">Sub District</span>
-                <input 
-                    id="sub_district" 
-                    name="sub_district" 
-                    list="sub_districts_list" 
-                    className="border border-slate-200 px-8 pr-2" 
-                    disabled={!district}
-                    onChange={(e) => setSubDistrict(e.target.value)}
+                <Autocomplete
+                    disabled={!district} 
+                    id="sub_district"
+                    options={mapSubDistricts}
+                    getOptionLabel={(option) => option.name_th}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     value={subDistrict}
-                    placeholder="Sub Districts Name"
+                    onChange={(e, newVal) => {
+                        setSubDistrict(newVal)
+                    }}
+                    size="small"
+                    renderInput={(params) => <TextField {...params} label="Sub District Name" />}
                 />
-                <datalist id={'sub_districts_list'}>
-                    {
-                        subDistricts.map((data) => (
-                            <option key={data.id} value={data.id}>{data.name_th}</option>
-                        ))
-                    }
-                </datalist>
-
-                {/* <span className="p-2">Sub District</span>
-                <input 
-                    onChange={(e) => setSubDistrict(e.target.value)}
-                    value={subDistrict.id}
-                    className="border border-slate-200 px-8 py-2"
-                    type="text"
-                    placeholder="Sub District"
-                /> */}
 
                 <span className="p-2">Parking Space</span>
                 <input 

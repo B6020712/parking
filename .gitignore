@@ -2,6 +2,7 @@
 node_modules
 dist
 build
+.next
 
 # Logs
 logs
@@ -66,7 +67,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /coverage
 
 # next.js
-*/.next/
 /out/
 
 # production
